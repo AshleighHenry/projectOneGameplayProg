@@ -51,8 +51,7 @@ public:
 	GLfloat* getIndex();
 	// 3 Colors RGB
 	int getIndexCount();
-	sf::RectangleShape m_collisionFace[4]; // rectangle shape for detecting collision between each game object
-	void render(sf::RenderWindow t_window);
+	sf::RectangleShape m_collisionFace; // rectangle shape for detecting collision between each game object
 };
 
 #endif // !GAME_OBJECT_H
