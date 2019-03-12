@@ -45,3 +45,13 @@ int GameObject::getUVCount() { return ARRAY_SIZE(uv); }
 GLfloat* GameObject::getIndex() { return this->index; }
 // 3 Colors RGB
 int GameObject::getIndexCount() { return ARRAY_SIZE(index) / 3; }
+
+bool GameObject::collision(sf::RectangleShape & t_playerCollision)
+{
+	if (m_collisionFace.getGlobalBounds().intersects(t_playerCollision.getGlobalBounds()))
+	{
+		std::cout << "collide";
+		return true;
+	}
+	return false;
+}

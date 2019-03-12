@@ -14,6 +14,8 @@ Player::Player()
 	memcpy(this->index, indices, sizeof(this->index));
 
 	this->position = vec3();
+	m_collisionFace.setPosition(position.x, position.y);
+	m_collisionFace.setSize(sf::Vector2f( 2, 2));
 }
 
 
@@ -22,25 +24,30 @@ void Player::setPosition(vec3 position) { this->position = position; }
 
 void Player::processEvents(sf::Event t_event)
 {
-	
+	if (t_event.type == sf::Event::KeyPressed)
+	{
+		if (t_event.key.code == sf::Keyboard::Space && (m_jump == false) && (m_fall == false))
+		{
+
+			m_jump = true;
+			m_jumpStartHeight = position.y;
+			m_jumpHeight = m_jumpStartHeight;
+		}
+
+		if (t_event.key.code == sf::Keyboard::Right)
+		{
+			position.x += 0.25;
+		}
+		else if (t_event.key.code == sf::Keyboard::Left)
+		{
+			position.x -= 0.25;
+		}
+	}
 }
 
 void Player::update()
 {
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && (m_jump == false) && (m_fall == false))
-	{
-		m_jump = true;
-		m_jumpStartHeight = position.y;
-		m_jumpHeight = m_jumpStartHeight;
-	}
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-	{
-		position.x += 0.25;
-	}
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-	{
-		position.x -= 0.25;
-	}
+	m_previousPosition = position; // previous position set before movement
 	if (m_jump)
 	{
 		m_jumpHeight += 0.25;
@@ -69,6 +76,8 @@ void Player::update()
 		
 		
 	}
+
+	m_collisionFace.setPosition(position.x, position.y); // setposition of collision box every frame 
 }
 
 // Returns the first element of the Vertex array
@@ -90,3 +99,21 @@ int Player::getUVCount() { return ARRAY_SIZE(uv); }
 GLfloat* Player::getIndex() { return this->index; }
 // 3 Colors RGB
 int Player::getIndexCount() { return ARRAY_SIZE(index) / 3; }
+
+sf::RectangleShape Player::getCollisionBox()
+{
+	return sf::RectangleShape(m_collisionFace);
+}
+
+vec3 Player::getPreviousPosition() const
+{
+	return vec3(m_previousPosition);
+}
+
+void Player::resetJump()
+{
+	m_jump = false;
+	m_fall = false;
+	m_jumpHeight = 0;
+	m_jumpStartHeight = 0;
+}

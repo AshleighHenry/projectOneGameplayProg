@@ -40,6 +40,9 @@ public:
 	GLfloat* getIndex();
 	// 3 Colors RGB
 	int getIndexCount();
+	sf::RectangleShape getCollisionBox();
+	vec3 getPreviousPosition() const; 
+	void resetJump(); // called when the cube has collides with the top of a game object 
 private:
 	// Cube Elements
 	GLfloat vertex[ARRAY_SIZE(vertices)];
@@ -47,12 +50,13 @@ private:
 	GLfloat uv[ARRAY_SIZE(uvs)];
 	GLfloat index[ARRAY_SIZE(indices)];
 	vec3 position;
-
+	vec3 m_previousPosition; // previousPosition of cube to check if collision happens on top or on the side of the cube. 
 	bool m_jump = false; 
 	bool m_fall = false; 
 	float m_jumpStartHeight;
 	float m_jumpHeight = 0;
 	const int MAX_JUMP = 3; // max height player can jump 
+	sf::RectangleShape m_collisionFace;
 
 
 };

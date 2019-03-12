@@ -64,13 +64,13 @@ Game::Game(sf::ContextSettings settings) :
 	// -----------------------------------------------------------------------------------------------------------------------
 	// Player Object
 	m_player = new Player();
-	m_player->setPosition(vec3(-3.0f, 0.0f, -3.0f));
+	m_player->setPosition(vec3(-3.0f, 0.0f, -4.0f));
 	// -----------------------------------------------------------------------------------------------------------------------
 	game_object[0] = new GameObject();
 	game_object[0]->setPosition(vec3(0.0f, 0.0f, -4.0f));
 
 	game_object[1] = new GameObject();
-	game_object[1]->setPosition(vec3(0.0f, 0.0f, -2.0f));
+	game_object[1]->setPosition(vec3(0.0f, 0.0f, -4.0f));
 }
 
 Game::~Game()
@@ -101,7 +101,10 @@ void Game::run()
 			{
 				isRunning = false;
 			}
-
+			else
+			{
+				m_player->processEvents(event);
+			}
 		}
 		update();
 		render();
@@ -306,6 +309,17 @@ void Game::update()
 	//check for collision
 	//
 	m_player->update();
+	for (int i = 0; i < 2; i++)
+	{
+		if (game_object[i]->collision(m_player->getCollisionBox())) // checks if bounding box is colliding with each other
+		{
+			if (m_player->getPreviousPosition().y -2 >= game_object[i]->getPosition().y)
+			{
+				std::cout << "topCollision";
+				m_player->resetJump();
+			}
+		}
+	}
 }
 
 void Game::render()
