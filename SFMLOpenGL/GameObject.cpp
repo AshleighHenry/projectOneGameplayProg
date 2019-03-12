@@ -14,6 +14,9 @@ GameObject::GameObject()
 	memcpy(this->index, indices, sizeof(this->index));
 
 	this->position = vec3();
+	m_collisionFace[0].setPosition(sf::Vector2f(position.x,position.y));
+	m_collisionFace[0].setSize(sf::Vector2f(2, 2)); // top face of cube. 
+	m_collisionFace[0].setFillColor(sf::Color::Red);
 }
 
 GameObject::~GameObject() 
@@ -42,3 +45,7 @@ int GameObject::getUVCount() { return ARRAY_SIZE(uv); }
 GLfloat* GameObject::getIndex() { return this->index; }
 // 3 Colors RGB
 int GameObject::getIndexCount() { return ARRAY_SIZE(index) / 3; }
+void GameObject::render(sf::RenderWindow t_window)
+{
+	t_window.draw(m_collisionFace[0]);
+}

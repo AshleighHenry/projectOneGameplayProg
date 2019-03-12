@@ -10,6 +10,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <SFML/Graphics.hpp>
+#include <iostream>
 using namespace glm;
 
 class Player
@@ -46,5 +47,13 @@ private:
 	GLfloat uv[ARRAY_SIZE(uvs)];
 	GLfloat index[ARRAY_SIZE(indices)];
 	vec3 position;
+
+	bool m_jump = false; 
+	bool m_fall = false; 
+	float m_jumpStartHeight;
+	float m_jumpHeight = 0;
+	const int MAX_JUMP = 3; // max height player can jump 
+
+
 };
 

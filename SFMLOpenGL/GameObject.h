@@ -11,6 +11,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+# include <SFML/graphics.hpp>
 
 using namespace glm;
 
@@ -50,6 +51,8 @@ public:
 	GLfloat* getIndex();
 	// 3 Colors RGB
 	int getIndexCount();
+	sf::RectangleShape m_collisionFace[4]; // rectangle shape for detecting collision between each game object
+	void render(sf::RenderWindow t_window);
 };
 
 #endif // !GAME_OBJECT_H

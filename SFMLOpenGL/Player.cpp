@@ -22,10 +22,53 @@ void Player::setPosition(vec3 position) { this->position = position; }
 
 void Player::processEvents(sf::Event t_event)
 {
+	
 }
 
 void Player::update()
 {
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && (m_jump == false) && (m_fall == false))
+	{
+		m_jump = true;
+		m_jumpStartHeight = position.y;
+		m_jumpHeight = m_jumpStartHeight;
+	}
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+	{
+		position.x += 0.25;
+	}
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+	{
+		position.x -= 0.25;
+	}
+	if (m_jump)
+	{
+		m_jumpHeight += 0.25;
+		if (m_jumpHeight < MAX_JUMP)
+		{
+			position.y += 0.25;
+		}
+		else if (m_jumpHeight >= MAX_JUMP)
+		{
+			m_fall = true;
+			m_jump = false; 
+		}
+	}
+	if (m_fall)
+	{
+		m_jumpHeight -= 0.25;
+		if (MAX_JUMP - m_jumpHeight < 3)
+		{
+			
+			position.y -= 0.25;
+		}
+		else
+		{
+			m_fall = false;
+		}
+		
+		
+	}
 }
 
 // Returns the first element of the Vertex array

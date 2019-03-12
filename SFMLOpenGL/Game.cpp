@@ -305,6 +305,7 @@ void Game::update()
 	//Player update
 	//check for collision
 	//
+	m_player->update();
 }
 
 void Game::render()
@@ -313,7 +314,7 @@ void Game::render()
 #if (DEBUG >= 2)
 	DEBUG_MSG("Render Loop...");
 #endif
-
+	game_object[0]->render(window);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Save current OpenGL render states
