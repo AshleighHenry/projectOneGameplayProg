@@ -7,7 +7,7 @@
 //MACRO for streaming DEBUG
 #if defined DEBUG
 #if (DEBUG >= 1)
-#define DEBUG_MSG(x) (std::cout << (x) << std::endl)
+#define DEBUG_MSG(x) 
 #else
 #define DEBUG_MSG(x)
 #endif

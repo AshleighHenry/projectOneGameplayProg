@@ -42,7 +42,13 @@ public:
 	int getIndexCount();
 	sf::RectangleShape getCollisionBox();
 	vec3 getPreviousPosition() const; 
-	void resetJump(); // called when the cube has collides with the top of a game object 
+	
+	void jump();
+	void fall();
+	bool getJump();
+	void changeFall(); // sets fall to true when no collision is detected under the player. 
+	bool getFall();
+	void moveRight();
 private:
 	// Cube Elements
 	GLfloat vertex[ARRAY_SIZE(vertices)];
@@ -53,9 +59,12 @@ private:
 	vec3 m_previousPosition; // previousPosition of cube to check if collision happens on top or on the side of the cube. 
 	bool m_jump = false; 
 	bool m_fall = false; 
-	float m_jumpStartHeight;
+	bool m_right = false;
+	float m_rightSpeed = 0.25; 
+	float m_jumpStartHeight = 0;
 	float m_jumpHeight = 0;
-	const int MAX_JUMP = 3; // max height player can jump 
+	float m_totalJumpLength = 0;
+	const int MAX_JUMP_HEIGHT = 3; // max height player can jump 
 	sf::RectangleShape m_collisionFace;
 
 

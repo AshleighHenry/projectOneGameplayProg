@@ -64,7 +64,7 @@ Game::Game(sf::ContextSettings settings) :
 	// -----------------------------------------------------------------------------------------------------------------------
 	// Player Object
 	m_player = new Player();
-	m_player->setPosition(vec3(-3.0f, 0.0f, -4.0f));
+	m_player->setPosition(vec3(0.0f, 0.0f, -4.0f));
 	// -----------------------------------------------------------------------------------------------------------------------
 	game_object[0] = new GameObject();
 	game_object[0]->setPosition(vec3(0.0f, 0.0f, -4.0f));
@@ -101,11 +101,8 @@ void Game::run()
 			{
 				isRunning = false;
 			}
-			else
-			{
-				m_player->processEvents(event);
-			}
-		}
+			m_player->processEvents(event);
+		}		
 		update();
 		render();
 	}
@@ -309,17 +306,30 @@ void Game::update()
 	//check for collision
 	//
 	m_player->update();
+	
 	for (int i = 0; i < 2; i++)
 	{
 		if (game_object[i]->collision(m_player->getCollisionBox())) // checks if bounding box is colliding with each other
 		{
-			if (m_player->getPreviousPosition().y -2 >= game_object[i]->getPosition().y)
+			std::cout << "collision" << std::endl; // collision with boxes wooo
+		}
+	}
+
+	for (int i = 0; i < 2; i++)
+	{
+		if (game_object[i]->collision(m_player->getCollisionBox()))
+		{
+			if (m_player->getPreviousPosition().y + 0.75 > game_object[i]->getPosition().y && (m_player->getJump() == false)) // check to see if collision is on the bottom of the player, if true it is and player is falling, set fall to false as it has collided with the game object
 			{
-				std::cout << "topCollision";
-				m_player->resetJump();
+				m_player->changeFall();
 			}
 		}
 	}
+	if (m_player->getFall())
+	{
+		m_player->fall();
+	}
+	
 }
 
 void Game::render()
@@ -348,7 +358,7 @@ void Game::render()
 
 	text.setFillColor(sf::Color(255, 255, 255, 170));
 	text.setPosition(50.f, 50.f);
-
+	text.setString(std::to_string(m_player->getPosition().y));
 	window.draw(text);
 
 	// Restore OpenGL render states

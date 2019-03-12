@@ -24,59 +24,32 @@ void Player::setPosition(vec3 position) { this->position = position; }
 
 void Player::processEvents(sf::Event t_event)
 {
-	if (t_event.type == sf::Event::KeyPressed)
-	{
-		if (t_event.key.code == sf::Keyboard::Space && (m_jump == false) && (m_fall == false))
+	if (t_event.key.code == sf::Keyboard::Space && m_jump == false && m_fall == false)
 		{
-
 			m_jump = true;
-			m_jumpStartHeight = position.y;
-			m_jumpHeight = m_jumpStartHeight;
 		}
-
-		if (t_event.key.code == sf::Keyboard::Right)
-		{
-			position.x += 0.25;
-		}
-		else if (t_event.key.code == sf::Keyboard::Left)
-		{
-			position.x -= 0.25;
-		}
+	if (t_event.key.code == sf::Keyboard::Right)
+	{
+		m_right = true;
 	}
+	if (t_event.type == sf::Event::KeyReleased)
+	{
+		m_right = false; 
+	}
+	
 }
 
 void Player::update()
 {
-	m_previousPosition = position; // previous position set before movement
+
 	if (m_jump)
 	{
-		m_jumpHeight += 0.25;
-		if (m_jumpHeight < MAX_JUMP)
-		{
-			position.y += 0.25;
-		}
-		else if (m_jumpHeight >= MAX_JUMP)
-		{
-			m_fall = true;
-			m_jump = false; 
-		}
+		jump();
 	}
-	if (m_fall)
+	if (m_right)
 	{
-		m_jumpHeight -= 0.25;
-		if (MAX_JUMP - m_jumpHeight < 3)
-		{
-			
-			position.y -= 0.25;
-		}
-		else
-		{
-			m_fall = false;
-		}
-		
-		
+		moveRight();
 	}
-
 	m_collisionFace.setPosition(position.x, position.y); // setposition of collision box every frame 
 }
 
@@ -110,10 +83,58 @@ vec3 Player::getPreviousPosition() const
 	return vec3(m_previousPosition);
 }
 
-void Player::resetJump()
+
+void Player::jump()
 {
-	m_jump = false;
+	m_previousPosition = position; // previous position set before movement
+	m_jumpStartHeight = position.y;
+	
+	if (m_totalJumpLength == MAX_JUMP_HEIGHT)
+	{
+		m_jump = false;
+		m_fall = true;
+		m_totalJumpLength = 0;
+		m_jumpStartHeight = 0;
+	}
+	position.y += 0.25;
+	m_totalJumpLength += 0.25;
+}
+
+void Player::fall()
+{
+	if (m_fall == true)
+	{
+		if (position.y == 0)
+		{
+			m_fall = false;
+		}
+		position.y -= 0.25;
+	}
+}
+
+bool Player::getJump()
+{
+	return m_jump;
+}
+
+void Player::changeFall()
+{
+	if (m_jump)
+	{
+		m_jump = false;
+		m_totalJumpLength = 0;
+		m_jumpStartHeight = 0;
+	}
 	m_fall = false;
-	m_jumpHeight = 0;
-	m_jumpStartHeight = 0;
+}
+
+bool Player::getFall()
+{
+	return m_fall;
+}
+
+void Player::moveRight()
+{
+	m_previousPosition = position;
+	position.x += m_rightSpeed; // 0.25 for test
 }
