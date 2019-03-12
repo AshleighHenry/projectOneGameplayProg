@@ -22,6 +22,8 @@
 
 #include <GameObject.h>
 
+#include <Player.h>
+
 using namespace std;
 using namespace sf;
 using namespace glm;
@@ -35,6 +37,7 @@ public:
 	void run();
 private:
 	GameObject* game_object[2];
+	Player* m_player;
 	RenderWindow window;
 	Clock clock;
 	Time time;

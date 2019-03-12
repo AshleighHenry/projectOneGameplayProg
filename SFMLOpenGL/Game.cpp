@@ -58,11 +58,19 @@ Game::Game(sf::ContextSettings settings) :
 	sf::Style::Default, 
 	settings)
 {
+
+	window.setFramerateLimit(30);
+
+	// -----------------------------------------------------------------------------------------------------------------------
+	// Player Object
+	m_player = new Player();
+	m_player->setPosition(vec3(-3.0f, 0.0f, -3.0f));
+	// -----------------------------------------------------------------------------------------------------------------------
 	game_object[0] = new GameObject();
-	game_object[0]->setPosition(vec3(0.5f, 0.5f, -10.0f));
+	game_object[0]->setPosition(vec3(0.0f, 0.0f, -4.0f));
 
 	game_object[1] = new GameObject();
-	game_object[1]->setPosition(vec3(0.8f, 0.8f, -6.0f));
+	game_object[1]->setPosition(vec3(0.0f, 0.0f, -2.0f));
 }
 
 Game::~Game()
@@ -94,95 +102,6 @@ void Game::run()
 				isRunning = false;
 			}
 
-			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-			{
-				// Set Model Rotation
-				if (!animate)
-				{
-					animate = true;
-					if (rotation < 0)
-						rotation *= -1; // Set Positive
-					animation = glm::vec3(0, 1, 0); //Rotate Y
-				}
-			}
-
-			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-			{
-				// Set Model Rotation
-				if (!animate)
-				{
-					animate = true;
-					if (rotation >= 0)
-						rotation *= -1; // Set Negative
-					animation = glm::vec3(0, 1, 0); //Rotate Y
-				}
-
-				// https://www.sfml-dev.org/documentation/2.0/classsf_1_1Clock.php
-				// https://github.com/acron0/Easings
-				// http://robotacid.com/documents/code/Easing.cs
-				// http://st33d.tumblr.com/post/94243475686/easing-equations-for-unity-c
-				// http://easings.net/
-				// http://upshots.org/actionscript/jsas-understanding-easing
-				// https://www.kirupa.com/html5/animating_with_easing_functions_in_javascript.htm
-				// https://medium.com/motion-in-interaction/animation-principles-in-ui-design-understanding-easing-bea05243fe3#.svh4gczav
-				// http://thednp.github.io/kute.js/easing.html
-				// http://gizma.com/easing/#quad1
-				// https://github.com/warrenm/AHEasing
-
-				// VR
-				// https://www.sfml-dev.org/documentation/2.4.2/classsf_1_1Sensor.php
-				// http://en.sfml-dev.org/forums/index.php?topic=9412.msg65594
-				// https://github.com/SFML/SFML/wiki/Tutorial:-Building-SFML-for-Android-on-Windows
-				// https://github.com/SFML/SFML/wiki/Tutorial:-Building-SFML-for-Android
-				// https://www.youtube.com/watch?v=n_JSi6ihDFs
-				// http://en.sfml-dev.org/forums/index.php?topic=8010.0
-				// 
-
-				/*
-				// Set Model Rotation
-				// t = time, b = startvalue, c = change in value, d = duration:
-
-				time = clock.getElapsedTime();
-				std::cout << time.asSeconds() << std::endl;
-				float original = 0.001f;
-				float destination = 0.05f;
-
-				float factor, temp;
-
-				for (int t = 0; t < 5.0f; t++)
-				{
-				factor = gpp::Easing::easeIn(t, original, 0.00001f, 5.0f);
-				cout << "Factor : " << factor << endl;
-				}
-
-
-				factor = gpp::Easing::easeIn(time.asMilliseconds(), original, 0.00001f, 5.0f);
-				cout << "Factor : " << factor << endl;
-				temp = original + ((destination - original) * factor);
-				cout << "Temp : " << factor << endl;
-				model = rotate(model, temp, glm::vec3(0, 1, 0)); // Rotate
-				*/
-			}
-
-			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-			{
-				// Set Model Rotation
-				model = rotate(model, -0.01f, glm::vec3(1, 0, 0)); // Rotate
-			}
-
-			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-			{
-				// Set Model Rotation
-				model = rotate(model, 0.01f, glm::vec3(1, 0, 0)); // Rotate
-			}
-
-			if (animate)
-			{
-				rotation += (1.0f * rotation) + 0.05f;
-				model = rotate(model, 0.01f, animation); // Rotate
-				rotation = 0.0f;
-				animate = false;
-			}
 		}
 		update();
 		render();
@@ -238,21 +157,14 @@ void Game::initialize()
 		""
 		"in vec3 sv_position;"
 		"in vec4 sv_color;"
-		"in vec2 sv_uv;"
 		""
 		"out vec4 color;"
-		"out vec2 uv;"
 		""
 		"uniform mat4 sv_mvp;"
-		"uniform float sv_x_offset;"
-		"uniform float sv_y_offset;"
-		"uniform float sv_z_offset;"
 		""
 		"void main() {"
 		"	color = sv_color;"
-		"	uv = sv_uv;"
-		//"	gl_Position = vec4(sv_position, 1);"
-		"	gl_Position = sv_mvp * vec4(sv_position.x + sv_x_offset, sv_position.y + sv_y_offset, sv_position.z + sv_z_offset, 1 );"
+		"	gl_Position = sv_mvp * vec4(sv_position, 1 );"
 		"}"; //Vertex Shader Src
 
 	DEBUG_MSG("Setting Up Vertex Shader");
@@ -279,12 +191,11 @@ void Game::initialize()
 		"uniform sampler2D f_texture;"
 		""
 		"in vec4 color;"
-		"in vec2 uv;"
 		""
 		"out vec4 fColor;"
 		""
 		"void main() {"
-		"	fColor = color - texture2D(f_texture, uv);"
+		"	fColor = color;"
 		""
 		"}"; //Fragment Shader Src
 
@@ -370,8 +281,8 @@ void Game::initialize()
 
 	// Camera Matrix
 	view = lookAt(
-		vec3(0.0f, 4.0f, 10.0f),	// Camera (x,y,z), in World Space
-		vec3(0.0f, 0.0f, 0.0f),		// Camera looking at origin
+		vec3(0.0f, 0.0f, 10.0f),	// Camera (x,y,z), in World Space
+		vec3(0.0f, 0.0f, 0.0f),		// Camera looking at origin//getplayerpos
 		vec3(0.0f, 1.0f, 0.0f)		// 0.0f, 1.0f, 0.0f Look Down and 0.0f, -1.0f, 0.0f Look Up
 		);
 
@@ -391,17 +302,9 @@ void Game::initialize()
 
 void Game::update()
 {
-#if (DEBUG >= 2)
-	DEBUG_MSG("Updating...");
-#endif
-	// Update Model View Projection
-	// For mutiple objects (cubes) create multiple models
-	// To alter Camera modify view & projection
-	mvp = projection * view * model;
-
-	DEBUG_MSG(model[0].x);
-	DEBUG_MSG(model[0].y);
-	DEBUG_MSG(model[0].z);
+	//Player update
+	//check for collision
+	//
 }
 
 void Game::render()
@@ -454,24 +357,8 @@ void Game::render()
 	colorID = glGetAttribLocation(progID, "sv_color");
 	if (colorID < 0) { DEBUG_MSG("colorID not found"); }
 
-	uvID = glGetAttribLocation(progID, "sv_uv");
-	if (uvID < 0) { DEBUG_MSG("uvID not found"); }
-
-	textureID = glGetUniformLocation(progID, "f_texture");
-	if (textureID < 0) { DEBUG_MSG("textureID not found"); }
-
 	mvpID = glGetUniformLocation(progID, "sv_mvp");
 	if (mvpID < 0) { DEBUG_MSG("mvpID not found"); }
-
-	x_offsetID = glGetUniformLocation(progID, "sv_x_offset");
-	if (x_offsetID < 0) { DEBUG_MSG("x_offsetID not found"); }
-
-	y_offsetID = glGetUniformLocation(progID, "sv_y_offset");
-	if (y_offsetID < 0) { DEBUG_MSG("y_offsetID not found"); }
-
-	z_offsetID = glGetUniformLocation(progID, "sv_z_offset");
-	if (z_offsetID < 0) { DEBUG_MSG("z_offsetID not found"); };
-
 	// VBO Data....vertices, colors and UV's appended
 	// Add the Vertices for all your GameOjects, Colors and UVS
 	
@@ -489,10 +376,7 @@ void Game::render()
 
 	// Set the X, Y and Z offset (this allows for multiple cubes via different shaders)
 	// Experiment with these values to change screen positions
-
-	glUniform1f(x_offsetID, game_object[0]->getPosition().x);
-	glUniform1f(y_offsetID, game_object[0]->getPosition().y);
-	glUniform1f(z_offsetID, game_object[0]->getPosition().z);
+	// you can do this
 
 	/*glUniform1f(x_offsetID, 0.00f);
 	glUniform1f(y_offsetID, 0.00f);
@@ -510,7 +394,17 @@ void Game::render()
 	glEnableVertexAttribArray(uvID);
 
 	// Draw Element Arrays
-	glDrawElements(GL_TRIANGLES, 3 * INDICES, GL_UNSIGNED_INT, NULL);
+	for (int i = 0; i < 2; i++)
+	{
+		mvp = projection * view * mat4(translate(mat4(1.0f), game_object[i]->getPosition()));
+		glUniformMatrix4fv(mvpID, 1, GL_FALSE, &mvp[0][0]);//model view projection,
+		glDrawElements(GL_TRIANGLES, 3 * INDICES, GL_UNSIGNED_INT, NULL);
+	}
+	
+		mvp = projection * view * mat4(translate(mat4(1.0f), m_player->getPosition()));
+		glUniformMatrix4fv(mvpID, 1, GL_FALSE, &mvp[0][0]);//model view projection,
+		glDrawElements(GL_TRIANGLES, 3 * INDICES, GL_UNSIGNED_INT, NULL);
+	
 	window.display();
 
 	// Disable Arrays
