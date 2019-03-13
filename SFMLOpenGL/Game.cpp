@@ -74,12 +74,31 @@ Game::Game(sf::ContextSettings settings) :
 
 	game_object[2] = new GameObject();
 	game_object[2]->setPosition(vec3(13, 0.0f, -4.0));*/
-	for (int i = 0; i < m_MAX; i++)
+	/*for (int i = 0; i < m_MAX; i++)
 	{
 		game_object[i] = new GameObject();
-		game_object[i]->setPosition(vec3(i +5.0f, 0.0f, -4.0f));
-		game_object[i]->setCollisionPos(vec3(i + 5.0f, 0.0f, -4.0f));
-	}
+		game_object[i]->setPosition(vec3(i * 4*1 +0, 0.0f, -4.0f));
+		game_object[i]->setCollisionPos(vec3(i *4+1.0f, 0.0f, -4.0f));
+	}*/
+	game_object[0] = new GameObject();
+	game_object[0]->setPosition(vec3(0.0f, 0.0f, -4.0f));
+	game_object[0]->setCollisionPos(vec3( 0.0f, 0.0f, -4.0f));
+	// -----------------------------------------------------------
+	game_object[1] = new GameObject();
+	game_object[1]->setPosition(vec3(6.0f, 0.0f, -4.0f));
+	game_object[1]->setCollisionPos(vec3(6.0f, 0.0f, -4.0f));
+	// -----------------------------------------------------------
+	game_object[2] = new GameObject();
+	game_object[2]->setPosition(vec3(8.0f, 7.0f, -4.0f));
+	game_object[2]->setCollisionPos(vec3(8.0f, 7.0f, -4.0f));
+	// -----------------------------------------------------------
+	game_object[3] = new GameObject();
+	game_object[3]->setPosition(vec3(11.0f, 0.0f, -4.0f));
+	game_object[3]->setCollisionPos(vec3(11.0f, 0.0f, -4.0f));
+	// -----------------------------------------------------------
+	game_object[4] = new GameObject();
+	game_object[4]->setPosition(vec3(16.0f, 2.0f, -4.0f));
+	game_object[4]->setCollisionPos(vec3(16.0f, 2.0f, -4.0f));
 }
 
 Game::~Game()
@@ -324,13 +343,21 @@ void Game::update()
 	//
 	m_player->update();
 
-	
+	if (m_player->getPosition().x > m_endPoint) // reached end
+	{
+
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
+		{
+			m_player->setPosition(vec3(-8, 0, -4)); // error code not found
+		}
+	}
 	
 	for (int i = 0; i < m_MAX; i++)
 	{
 		if (game_object[i]->collision(m_player->getCollisionBox()))
 		{
 			std::cout << "why";
+			//m_player->stopFall();
 			m_player->setPosition(vec3(-8, 0, -4)); // error code not found
 			
 		}
@@ -357,21 +384,14 @@ void Game::render()
 	// https://www.sfml-dev.org/documentation/2.0/classsf_1_1RenderTarget.php#a8d1998464ccc54e789aaf990242b47f7
 	window.pushGLStates();
 
-	// Find mouse position using sf::Mouse
-	int x = Mouse::getPosition(window).x;
-	int y = Mouse::getPosition(window).y;
-
-	string hud = "Heads Up Display ["
-		+ string(toString(x))
-		+ "]["
-		+ string(toString(y))
-		+ "]";
-
 	Text text(hud, font);
 
 	text.setFillColor(sf::Color(255, 255, 255, 170));
 	text.setPosition(50.f, 50.f);
-	text.setString(std::to_string(m_player->getPosition().y));
+	if (m_player->getPosition().x > m_endPoint) // reached end
+	{
+		text.setString("End Reached! Press R To Restart");
+	}
 	window.draw(text);
 
 	// Restore OpenGL render states

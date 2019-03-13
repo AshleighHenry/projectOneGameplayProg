@@ -50,6 +50,8 @@ private:
 	void update();
 	void render();
 	void unload();
+	float m_endPoint = 20.0f;
+	string hud;
 };
 
 #endif  // ! GAME_H

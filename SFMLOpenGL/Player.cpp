@@ -29,14 +29,18 @@ void Player::processEvents(sf::Event t_event)
 {
 	if (t_event.key.code == sf::Keyboard::Space && m_jump == false && m_fall == false)
 	{
-		// initialize jumping variables when space is pressed when the 
-		if (m_velocity.y == 0.0f)
+		if (t_event.KeyPressed)
 		{
-			m_velocity.y = 0.3f;
-			m_jumpStartHeight = 0;
-			m_totalJumpLength = 0;
-			m_jump = true;
+			// initialize jumping variables when space is pressed when the 
+			if (m_velocity.y == 0.0f)
+			{
+				m_velocity.y = 0.3f;
+				m_jumpStartHeight = 0;
+				m_totalJumpLength = 0;
+				m_jump = true;
+			}
 		}
+		
 	}
 }
 
@@ -45,11 +49,11 @@ void Player::update()
 	m_previousPosition = position; // previous position set before movement
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 	{
-		position.x += 0.3f;
+		position.x += 0.5f;
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 	{
-	position.x -=0.3f;
+	position.x -=0.5f;
 	}
 	if (m_jump)
 	{
@@ -112,7 +116,7 @@ void Player::jump()
 void Player::fall()
 {
 	position.y -= m_velocity.y;
-	m_velocity.y -= m_velocity.y * -m_gravity.y;
+	m_velocity.y -= m_velocity.y * -m_gravity.y -0.2;
 	if (position.y <= 0)
 	{
 		position.y = 0;
@@ -145,8 +149,3 @@ void Player::stopFall()
 	m_fall = false;
 }
 
-void Player::moveRight()
-{
-	m_velocity.x = 0.3;
-	//position.x += m_velocity.x;
-}
