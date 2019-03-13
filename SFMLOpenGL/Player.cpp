@@ -20,7 +20,10 @@ Player::Player()
 
 
 vec3 Player::getPosition() { return this->position; }
-void Player::setPosition(vec3 position) { this->position = position; }
+void Player::setPosition(vec3 position) 
+{ 
+	this->position = position; 
+}
 
 void Player::processEvents(sf::Event t_event)
 {
@@ -41,15 +44,17 @@ void Player::processEvents(sf::Event t_event)
 
 void Player::update()
 {
-
+	m_previousPosition = position; // previous position set before movement
 	if (m_jump)
 	{
 		jump();
 	}
+	
 	if (m_right)
 	{
 		moveRight();
 	}
+	
 	m_collisionFace.setPosition(position.x, position.y); // setposition of collision box every frame 
 }
 
@@ -86,7 +91,6 @@ vec3 Player::getPreviousPosition() const
 
 void Player::jump()
 {
-	m_previousPosition = position; // previous position set before movement
 	m_jumpStartHeight = position.y;
 	
 	if (m_totalJumpLength == MAX_JUMP_HEIGHT)
@@ -135,6 +139,5 @@ bool Player::getFall()
 
 void Player::moveRight()
 {
-	m_previousPosition = position;
 	position.x += m_rightSpeed; // 0.25 for test
 }
