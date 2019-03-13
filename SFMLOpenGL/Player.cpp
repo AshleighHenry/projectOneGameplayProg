@@ -15,49 +15,49 @@ Player::Player()
 
 	this->position = vec3();
 	m_collisionFace.setPosition(position.x, position.y);
-	m_collisionFace.setSize(sf::Vector2f( 2, 2));
+	m_collisionFace.setSize(sf::Vector2f(2, 2));
 }
 
 
 vec3 Player::getPosition() { return this->position; }
-void Player::setPosition(vec3 position) 
-{ 
-	this->position = position; 
+void Player::setPosition(vec3 position)
+{
+	this->position = position;
 }
 
 void Player::processEvents(sf::Event t_event)
 {
 	if (t_event.key.code == sf::Keyboard::Space && m_jump == false && m_fall == false)
+	{
+		// initialize jumping variables when space is pressed when the 
+		if (m_velocity.y == 0.0f)
 		{
+			m_velocity.y = 0.1f;
+			m_jumpStartHeight = 0;
+			m_totalJumpLength = 0;
 			m_jump = true;
 		}
-	if (t_event.key.code == sf::Keyboard::Right)
-	{
-		m_right = true;
 	}
-	if (t_event.type == sf::Event::KeyReleased)
-	{
-		m_right = false; 
-	}
-	
+
+
+
 }
 
 void Player::update()
 {
 	m_previousPosition = position; // previous position set before movement
+	moveRight();
 	if (m_jump)
 	{
 		jump();
 	}
-	
-	if (m_right)
+	if (m_fall)
 	{
-		moveRight();
+		fall();
 	}
-	
+
 	m_collisionFace.setPosition(position.x, position.y); // setposition of collision box every frame 
 }
-
 // Returns the first element of the Vertex array
 GLfloat* Player::getVertex() { return this->vertex; }
 // 3 Vertices
@@ -91,28 +91,29 @@ vec3 Player::getPreviousPosition() const
 
 void Player::jump()
 {
-	m_jumpStartHeight = position.y;
-	
-	if (m_totalJumpLength == MAX_JUMP_HEIGHT)
+	m_totalJumpLength += m_velocity.y;
+	if (m_totalJumpLength <= MAX_JUMP_HEIGHT)
+	{
+		position += m_velocity;
+		m_velocity += m_velocity * m_gravity;
+	}
+	else
 	{
 		m_jump = false;
 		m_fall = true;
-		m_totalJumpLength = 0;
-		m_jumpStartHeight = 0;
 	}
-	position.y += 0.25;
-	m_totalJumpLength += 0.25;
+
 }
 
 void Player::fall()
 {
-	if (m_fall == true)
+	position -= m_velocity;
+	m_velocity -= m_velocity * -m_gravity;
+	if (position.y <= 0)
 	{
-		if (position.y == 0)
-		{
-			m_fall = false;
-		}
-		position.y -= 0.25;
+		position.y = 0;
+		m_velocity.y = 0;
+		m_fall = false;
 	}
 }
 
@@ -121,15 +122,11 @@ bool Player::getJump()
 	return m_jump;
 }
 
-void Player::changeFall()
+void Player::stopJump()
 {
-	if (m_jump)
-	{
-		m_jump = false;
-		m_totalJumpLength = 0;
-		m_jumpStartHeight = 0;
-	}
-	m_fall = false;
+	m_velocity.y = 0;
+	m_jump = false;
+	m_fall = true;
 }
 
 bool Player::getFall()
@@ -137,7 +134,16 @@ bool Player::getFall()
 	return m_fall;
 }
 
+void Player::stopFall()
+{
+	// player collided with top of cube, HALT ALL Y VELOCITIES!
+	m_velocity.y = 0;
+	m_fall = false;
+}
+
 void Player::moveRight()
 {
-	position.x += m_rightSpeed; // 0.25 for test
+
+	m_velocity.x = 0.1;
+	position.x += m_velocity.x;
 }

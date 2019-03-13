@@ -50,7 +50,7 @@ bool GameObject::collision(sf::RectangleShape & t_playerCollision)
 {
 	if (m_collisionFace.getGlobalBounds().intersects(t_playerCollision.getGlobalBounds()))
 	{
-		std::cout << "collide";
+		
 		return true;
 	}
 	return false;

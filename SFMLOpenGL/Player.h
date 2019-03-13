@@ -41,14 +41,16 @@ public:
 	// 3 Colors RGB
 	int getIndexCount();
 	sf::RectangleShape getCollisionBox();
-	vec3 getPreviousPosition() const; 
-	
+	vec3 getPreviousPosition() const;
+
 	void jump();
 	void fall();
 	bool getJump();
-	void changeFall(); // sets fall to true when no collision is detected under the player. 
+	void stopJump(); // sets fall to true when no collision is detected under the player. 
 	bool getFall();
+	void stopFall();
 	void moveRight();
+	bool ded = false;
 private:
 	// Cube Elements
 	GLfloat vertex[ARRAY_SIZE(vertices)];
@@ -57,15 +59,19 @@ private:
 	GLfloat index[ARRAY_SIZE(indices)];
 	vec3 position;
 	vec3 m_previousPosition; // previousPosition of cube to check if collision happens on top or on the side of the cube. 
-	bool m_jump = false; 
-	bool m_fall = false; 
+	bool m_jump = false;
+	bool m_fall = false;
 	bool m_right = false;
-	float m_rightSpeed = 0.25; 
+	float m_rightSpeed = 0.25;
 	float m_jumpStartHeight = 0;
 	float m_jumpHeight = 0;
 	float m_totalJumpLength = 0;
 	const int MAX_JUMP_HEIGHT = 3; // max height player can jump 
 	sf::RectangleShape m_collisionFace;
+	vec3 m_gravity{ 0.0f, -0.000000098f, 0.0f };
+	vec3 m_initialVelocity{ 0.1f, 0.0f,0.0f };
+	vec3 m_velocity{ 0.0f,0.0f,0.0f };
+	bool m_stopMove = false;
 
 
 };

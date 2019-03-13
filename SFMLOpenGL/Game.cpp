@@ -64,7 +64,7 @@ Game::Game(sf::ContextSettings settings) :
 	// -----------------------------------------------------------------------------------------------------------------------
 	// Player Object
 	m_player = new Player();
-	m_player->setPosition(vec3(-2.0f, 0.0f, -4.0f));
+	m_player->setPosition(vec3(-5.0f, 0.0f, -4.0f));
 	// -----------------------------------------------------------------------------------------------------------------------
 	game_object[0] = new GameObject();
 	game_object[0]->setPosition(vec3(0.0f, 0.0f, -4.0f));
@@ -307,25 +307,20 @@ void Game::update()
 	//
 	m_player->update();
 
-	for (int i = 0; i < 2; i++)
-	{
-		if (game_object[i]->collision(m_player->getCollisionBox())) // checks if bounding box is colliding with each other
-		{
-			std::cout << "collision" << std::endl; // collision with boxes wooo
-		}
-	}
-	if (m_player->getFall())
-	{
-		m_player->fall();
-	}
+	
+	
 	for (int i = 0; i < 2; i++)
 	{
 		if (game_object[i]->collision(m_player->getCollisionBox()))
 		{
 			if (m_player->getPreviousPosition().y > game_object[i]->getPosition().y + 1.00f && (m_player->getFall())) // check to see if collision is on the bottom of the player, if true it is and player is falling, set fall to false as it has collided with the game object
 			{
-				m_player->changeFall();
-				m_player->setPosition(game_object[i]->getPosition() + vec3(0.0f, 2.0f, 0.0f));
+				m_player->stopFall();
+				//m_player->setPosition(game_object[i]->getPosition() + vec3(0.0f, 2.0f, 0.0f));
+			}
+			else if (m_player->getPreviousPosition().x +2 < game_object[i]->getPosition().x)
+			{
+				m_player->setPosition(vec3(-3.0f, m_player->getPosition().y, m_player->getPosition().z));
 			}
 			else
 			{
