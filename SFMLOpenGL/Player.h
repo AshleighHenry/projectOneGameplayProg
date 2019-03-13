@@ -66,10 +66,10 @@ private:
 	float m_jumpStartHeight = 0;
 	float m_jumpHeight = 0;
 	float m_totalJumpLength = 0;
-	const int MAX_JUMP_HEIGHT = 3; // max height player can jump 
+	const int MAX_JUMP_HEIGHT = 5; // max height player can jump 
 	sf::RectangleShape m_collisionFace;
-	vec3 m_gravity{ 0.0f, -0.000000098f, 0.0f };
-	vec3 m_initialVelocity{ 0.1f, 0.0f,0.0f };
+	vec3 m_gravity{ 0.0f, -0.0000098f, 0.0f };
+	vec3 m_initialVelocity{ 0.2f, 1.0f,0.0f };
 	vec3 m_velocity{ 0.0f,0.0f,0.0f };
 	bool m_stopMove = false;
 

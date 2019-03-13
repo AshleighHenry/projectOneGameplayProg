@@ -64,13 +64,22 @@ Game::Game(sf::ContextSettings settings) :
 	// -----------------------------------------------------------------------------------------------------------------------
 	// Player Object
 	m_player = new Player();
-	m_player->setPosition(vec3(-5.0f, 0.0f, -4.0f));
+	m_player->setPosition(vec3(-8.0f, 0.0f, -4.0f));
 	// -----------------------------------------------------------------------------------------------------------------------
-	game_object[0] = new GameObject();
+	/*game_object[0] = new GameObject();
 	game_object[0]->setPosition(vec3(0.0f, 0.0f, -4.0f));
 
 	game_object[1] = new GameObject();
-	game_object[1]->setPosition(vec3(2.0f, 0.0f, -4.0f));
+	game_object[1]->setPosition(vec3(8.0f, 0.0f, -4.0f));
+
+	game_object[2] = new GameObject();
+	game_object[2]->setPosition(vec3(13, 0.0f, -4.0));*/
+	for (int i = 0; i < m_MAX; i++)
+	{
+		game_object[i] = new GameObject();
+		game_object[i]->setPosition(vec3(i +5.0f, 0.0f, -4.0f));
+		game_object[i]->setCollisionPos(vec3(i + 5.0f, 0.0f, -4.0f));
+	}
 }
 
 Game::~Game()
@@ -157,14 +166,21 @@ void Game::initialize()
 		""
 		"in vec3 sv_position;"
 		"in vec4 sv_color;"
+		"in vec2 sv_uv;"
 		""
 		"out vec4 color;"
+		"out vec2 uv;"
 		""
 		"uniform mat4 sv_mvp;"
+		"uniform float sv_x_offset;"
+		"uniform float sv_y_offset;"
+		"uniform float sv_z_offset;"
 		""
 		"void main() {"
 		"	color = sv_color;"
-		"	gl_Position = sv_mvp * vec4(sv_position, 1 );"
+		"	uv = sv_uv;"
+		//"	gl_Position = vec4(sv_position, 1);"
+		"	gl_Position = sv_mvp * vec4(sv_position.x + sv_x_offset, sv_position.y + sv_y_offset, sv_position.z + sv_z_offset, 1 );"
 		"}"; //Vertex Shader Src
 
 	DEBUG_MSG("Setting Up Vertex Shader");
@@ -191,11 +207,12 @@ void Game::initialize()
 		"uniform sampler2D f_texture;"
 		""
 		"in vec4 color;"
+		"in vec2 uv;"
 		""
 		"out vec4 fColor;"
 		""
 		"void main() {"
-		"	fColor = color;"
+		"	fColor = texture2D(f_texture, uv);"
 		""
 		"}"; //Fragment Shader Src
 
@@ -309,23 +326,13 @@ void Game::update()
 
 	
 	
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < m_MAX; i++)
 	{
 		if (game_object[i]->collision(m_player->getCollisionBox()))
 		{
-			if (m_player->getPreviousPosition().y > game_object[i]->getPosition().y + 1.00f && (m_player->getFall())) // check to see if collision is on the bottom of the player, if true it is and player is falling, set fall to false as it has collided with the game object
-			{
-				m_player->stopFall();
-				//m_player->setPosition(game_object[i]->getPosition() + vec3(0.0f, 2.0f, 0.0f));
-			}
-			else if (m_player->getPreviousPosition().x +2 < game_object[i]->getPosition().x)
-			{
-				m_player->setPosition(vec3(-3.0f, m_player->getPosition().y, m_player->getPosition().z));
-			}
-			else
-			{
-			//	m_player->
-			}
+			std::cout << "why";
+			m_player->setPosition(vec3(-8, 0, -4)); // error code not found
+			
 		}
 		
 	}
@@ -384,8 +391,13 @@ void Game::render()
 	positionID = glGetAttribLocation(progID, "sv_position");
 	if (positionID < 0) { DEBUG_MSG("positionID not found"); }
 
-	colorID = glGetAttribLocation(progID, "sv_color");
-	if (colorID < 0) { DEBUG_MSG("colorID not found"); }
+	
+	uvID = glGetAttribLocation(progID, "sv_uv");
+	if (uvID < 0) { DEBUG_MSG("uvID not found"); }
+
+	textureID = glGetUniformLocation(progID, "f_texture");
+	if (textureID < 0) { DEBUG_MSG("textureID not found"); }
+
 
 	mvpID = glGetUniformLocation(progID, "sv_mvp");
 	if (mvpID < 0) { DEBUG_MSG("mvpID not found"); }
@@ -424,7 +436,7 @@ void Game::render()
 	glEnableVertexAttribArray(uvID);
 
 	// Draw Element Arrays
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < m_MAX; i++)
 	{
 		mvp = projection * view * mat4(translate(mat4(1.0f), game_object[i]->getPosition()));
 		glUniformMatrix4fv(mvpID, 1, GL_FALSE, &mvp[0][0]);//model view projection,

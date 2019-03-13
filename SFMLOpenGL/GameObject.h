@@ -54,6 +54,7 @@ public:
 	int getIndexCount();
 	sf::RectangleShape m_collisionFace; // rectangle shape for detecting collision between each game object
 	bool collision(sf::RectangleShape &t_playerCollision);
+	void setCollisionPos(vec3 & t_pos);
 
 };
 

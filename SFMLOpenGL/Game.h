@@ -35,8 +35,9 @@ public:
 	Game(sf::ContextSettings settings);
 	~Game();
 	void run();
+	static const int m_MAX = 5;
 private:
-	GameObject* game_object[2];
+	GameObject* game_object[m_MAX]; // agline developmnet 
 	Player* m_player;
 	RenderWindow window;
 	Clock clock;

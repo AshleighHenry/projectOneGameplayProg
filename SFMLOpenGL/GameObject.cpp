@@ -55,3 +55,8 @@ bool GameObject::collision(sf::RectangleShape & t_playerCollision)
 	}
 	return false;
 }
+
+void GameObject::setCollisionPos(vec3 & t_pos)
+{
+	m_collisionFace.setPosition(sf::Vector2f(t_pos.x, t_pos.y));
+}
