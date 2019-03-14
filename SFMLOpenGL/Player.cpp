@@ -53,7 +53,10 @@ void Player::update()
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 	{
-	position.x -=0.5f;
+		if (position.x > -6)
+		{
+			position.x -= 0.5f;
+		}	
 	}
 	if (m_jump)
 	{
